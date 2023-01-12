@@ -17,10 +17,27 @@
       bottom: 0;
       width: 100%;
     }
+
+    #menu {
+      position: absolute;
+      background: #efefef;
+      padding: 10px;
+      font-family: 'Open Sans', sans-serif;
+    }
   </style>
 </head>
 <body>
   <div id="map"></div>
+  <div id="menu">
+    <input id="outdoor" type="radio" name="rtoggle" value="outdoor" checked="checked">
+    <label for="outdoor">Outdoor</label>
+    <input id="road" type="radio" name="rtoggle" value="road">
+    <label for="road">Road</label>
+    <input id="light" type="radio" name="rtoggle" value="light">
+    <label for="light">Light</label>
+    <input id="night" type="radio" name="rtoggle" value="night">
+    <label for="night">Night</label>
+  </div>
 
   <script src="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.js"></script>
   <script>
@@ -28,6 +45,7 @@
     const map = window.map = new maplibregl.Map({
       container: 'map',
       maxZoom: 18,
+      // Styles are documented in https://www.ordnancesurvey.co.uk/documents/os-open-zoomstack-vector-tile-api.pdf
       style: 'https://s3-eu-west-1.amazonaws.com/tiles.os.uk/v2/styles/open-zoomstack-outdoor/style.json',
       center: [-2.9603, 54.4279],
       maxBounds: [
@@ -41,6 +59,16 @@
     map.addControl(new maplibregl.NavigationControl());
     map.addControl(new maplibregl.FullscreenControl());
     map.addControl(new maplibregl.GeolocateControl());
+
+    const layerList = document.getElementById('menu');
+    const inputs = layerList.getElementsByTagName('input');
+
+    for (const input of inputs) {
+      input.onclick = (layer) => {
+        const layerId = layer.target.id;
+        map.setStyle('https://s3-eu-west-1.amazonaws.com/tiles.os.uk/v2/styles/open-zoomstack-' + layerId + '/style.json');
+      };
+    }
   </script>
 </body>
 </html>
